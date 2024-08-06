@@ -54,7 +54,7 @@ with st.spinner('Wait for it...'):
     time.sleep(0.05)
 fl = st.file_uploader("📁 Upload a file", type=(["csv", "txt", "xlsx", "xls"]))
 
-if st.toast('Click Dataset Analysis!', icon='🚀'):
+if st.toast('Choose the Filter!', icon='🚀'):
     time.sleep(1)
     with st.spinner('Wait for it...'):
         time.sleep(1)

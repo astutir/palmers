@@ -63,7 +63,7 @@ def generate_style(column_name, value, background_color):
 
 # Display snow effect and welcome toast
 st.snow()
-st.toast('Welcome to this Page!', icon='🎉')
+st.toast('Predict the Penguin Species!', icon='🎉')
 
 # Display date and time
 display_date_time()
@@ -72,55 +72,43 @@ display_date_time()
 display_parameter_header()
 
 # File uploader for CSV file
-upload_file = st.sidebar.file_uploader("Upload your CSV file", type=["csv"])
+
 st.sidebar.info('Input this Parameter, please!')
 
-# If file is uploaded
-if upload_file is not None:
-    inputan = pd.read_csv(upload_file)
-    if st.sidebar.button('Submit'):
-        st.write(inputan)  # Display the uploaded data
+def input_user():
+    island = st.sidebar.selectbox("Island", ("Biscoe", "Dream", "Torgersen"))
+    sex = st.sidebar.radio("Sex", ("male", "female"))
+    bill_length = st.sidebar.slider("Length of Bill (mm)", 32.1, 59.6, 43.0)
+    bill_depth = st.sidebar.slider("Depth of Bill (mm)", 13.1, 21.5, 17.0)
+    flipper_length = st.sidebar.slider("Length of Flipper (mm)", 172.0, 231.0, 201.0)
+    body_mass = st.sidebar.slider("Body Mass (g)", 2700.0, 6300.0, 4207.0)
+    
+    data = {
+        "island": island,
+        "sex": sex,
+        "bill_length_mm": bill_length,
+        "bill_depth_mm": bill_depth,
+        "flipper_length_mm": flipper_length,
+        "body_mass_g": body_mass
+    }
+    fitur = pd.DataFrame(data, index=[0])
+    
+    tombol = st.sidebar.button('Submit')           
+    if tombol:
+        progress_text = "Operation in progress. Please wait."
+        my_bar = st.progress(0, text=progress_text)
+
+        for percent_complete in range(100):
+            time.sleep(0.01)
+            my_bar.progress(percent_complete + 1, text=progress_text)
+        time.sleep(1)
+        my_bar.empty()
         with st.spinner('Wait for it...'):
             time.sleep(2)
         st.sidebar.success('Prediction is Success!')
-
-else:
-    inputan = None
-
-    def input_user():
-        island = st.sidebar.selectbox("Island", ("Biscoe", "Dream", "Torgersen"))
-        sex = st.sidebar.radio("Sex", ("male", "female"))
-        bill_length = st.sidebar.slider("Length of Bill (mm)", 32.1, 59.6, 43.0)
-        bill_depth = st.sidebar.slider("Depth of Bill (mm)", 13.1, 21.5, 17.0)
-        flipper_length = st.sidebar.slider("Length of Flipper (mm)", 172.0, 231.0, 201.0)
-        body_mass = st.sidebar.slider("Body Mass (g)", 2700.0, 6300.0, 4207.0)
-        
-        data = {
-            "island": island,
-            "sex": sex,
-            "bill_length_mm": bill_length,
-            "bill_depth_mm": bill_depth,
-            "flipper_length_mm": flipper_length,
-            "body_mass_g": body_mass
-        }
-        fitur = pd.DataFrame(data, index=[0])
-        
-        tombol = st.sidebar.button('Submit')           
-        if tombol:
-            progress_text = "Operation in progress. Please wait."
-            my_bar = st.progress(0, text=progress_text)
-
-            for percent_complete in range(100):
-                time.sleep(0.01)
-                my_bar.progress(percent_complete + 1, text=progress_text)
-            time.sleep(1)
-            my_bar.empty()
-            with st.spinner('Wait for it...'):
-                time.sleep(2)
-            st.sidebar.success('Prediction is Success!')
-            return fitur 
+        return fitur 
     
-    inputan = input_user()
+inputan = input_user()
 
 # Load dataset and model
 penguin_raw = pd.read_csv("penguins_cleaned.csv")
@@ -129,48 +117,33 @@ df = pd.concat([inputan, penguins], axis=0)
 
 # Encode features
 encode = ["sex", "island"]
-if upload_file is not None:
-    dummy = pd.get_dummies(inputan[["sex", "island"]], prefix=["sex", "island"])
-    df = pd.concat([inputan, dummy], axis=1)
-    df.drop(["sex", "island"], axis=1, inplace=True)
-    df = df.drop(columns=["species"])
-else:  
-    for col in encode:
-        dummy = pd.get_dummies(df[col], prefix=col)
-        df = pd.concat([df, dummy], axis=1)
-        del df[col]
-    df = df[:1]  # Take the first row (input data user)
+  
+for col in encode:
+    dummy = pd.get_dummies(df[col], prefix=col)
+    df = pd.concat([df, dummy], axis=1)
+    del df[col]
+df = df[:1]  # Take the first row (input data user)
 
 # Display parameter information
 col1, col2 = st.columns(2)
 
-if upload_file is not None:
-    col1.markdown(generate_style('Mode of Island', inputan['island'].mode().iloc[0], '#FFF5C2'), unsafe_allow_html=True)
-    col2.markdown(generate_style('Mode of Sex', inputan['sex'].mode().iloc[0], '#FFF5C2'), unsafe_allow_html=True)
-
-    col1, col2, col3, col4 = st.columns(4)
-    col1.markdown(generate_style('Bill Depth (mm)', df['bill_depth_mm'][0], 'yellow'), unsafe_allow_html=True)
-    col2.markdown(generate_style('Flipper Length (mm)', df['flipper_length_mm'][0], 'yellow'), unsafe_allow_html=True)
-    col3.markdown(generate_style('Bill Length (mm)', df['bill_length_mm'][0], 'yellow'), unsafe_allow_html=True)
-    col4.markdown(generate_style('Body Mass (g)', df['body_mass_g'][0], 'yellow'), unsafe_allow_html=True)
+if df['island_Dream'][0]:
+    col1.markdown(generate_style('Island', 'Dream', '#FFF5C2'), unsafe_allow_html=True)
+elif df['island_Biscoe'][0]:
+    col1.markdown(generate_style('Island', 'Biscoe', '#FFF5C2'), unsafe_allow_html=True)
 else:
-    if df['island_Dream'][0]:
-        col1.markdown(generate_style('Island', 'Dream', '#FFF5C2'), unsafe_allow_html=True)
-    elif df['island_Biscoe'][0]:
-        col1.markdown(generate_style('Island', 'Biscoe', '#FFF5C2'), unsafe_allow_html=True)
-    else:
-        col1.markdown(generate_style('Island', 'Torgersen', '#FFF5C2'), unsafe_allow_html=True)
+    col1.markdown(generate_style('Island', 'Torgersen', '#FFF5C2'), unsafe_allow_html=True)
 
-    if df['sex_male'][0]:
-        col2.markdown(generate_style('Sex', 'Male', '#FFF5C2'), unsafe_allow_html=True)
-    else:
-        col2.markdown(generate_style('Sex', 'Female', '#FFF5C2'), unsafe_allow_html=True)
+if df['sex_male'][0]:
+    col2.markdown(generate_style('Sex', 'Male', '#FFF5C2'), unsafe_allow_html=True)
+else:
+    col2.markdown(generate_style('Sex', 'Female', '#FFF5C2'), unsafe_allow_html=True)
 
-    col1, col2, col3, col4 = st.columns(4)
-    col1.markdown(generate_style('Bill Depth (mm)', df['bill_depth_mm'][0], 'yellow'), unsafe_allow_html=True)
-    col2.markdown(generate_style('Flipper Length (mm)', df['flipper_length_mm'][0], 'yellow'), unsafe_allow_html=True)
-    col3.markdown(generate_style('Bill Length (mm)', df['bill_length_mm'][0], 'yellow'), unsafe_allow_html=True)
-    col4.markdown(generate_style('Body Mass (g)', df['body_mass_g'][0], 'yellow'), unsafe_allow_html=True)
+col1, col2, col3, col4 = st.columns(4)
+col1.markdown(generate_style('Bill Depth (mm)', df['bill_depth_mm'][0], 'yellow'), unsafe_allow_html=True)
+col2.markdown(generate_style('Flipper Length (mm)', df['flipper_length_mm'][0], 'yellow'), unsafe_allow_html=True)
+col3.markdown(generate_style('Bill Length (mm)', df['bill_length_mm'][0], 'yellow'), unsafe_allow_html=True)
+col4.markdown(generate_style('Body Mass (g)', df['body_mass_g'][0], 'yellow'), unsafe_allow_html=True)
 
 # Load the Naive Bayes model
 load_model = pickle.load(open("modelNBC_penguin.pkl", "rb"))
