@@ -97,30 +97,27 @@ def display_additional_info():
         unsafe_allow_html=True
     )
 
-# Main function to display the page content
-def main():
-    # Optional: Add rain effect
-    rain(
-        emoji="❄️",
-        font_size=25,
-        falling_speed=7,
-        animation_length="infinite",
-    )
 
-    # Display content for the single page
-    display_logo()
-    st.sidebar.markdown('This application is designed to help users quickly and accurately learn about the species of Palmer Penguins')
+# Optional: Add rain effect
+rain(
+    emoji="❄️",
+    font_size=25,
+    falling_speed=7,
+    animation_length="infinite",
+)
 
-    display_header()
-    display_date_time()
-    display_penguin_image()
-    display_data_info()
-    display_culmen_image()
-    display_additional_info()
+# Display content for the single page
+display_logo()
+st.sidebar.markdown('This application is designed to help users quickly and accurately learn about the species of Palmer Penguins')
 
-    # Info message with a link to the dataset
-    st.info('For more information, you can access the Palmer Penguins dataset on GitHub: [palmerpenguins](https://github.com/allisonhorst/palmerpenguins)')
+display_header()
+display_date_time()
+display_penguin_image()
+display_data_info()
+display_culmen_image()
+display_additional_info()
 
-# Call the main function
-if __name__ == "__main__":
-    main()
+# Info message with a link to the dataset
+st.info('For more information, you can access the Palmer Penguins dataset on GitHub: [palmerpenguins](https://github.com/allisonhorst/palmerpenguins)')
+
+

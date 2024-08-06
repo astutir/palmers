@@ -164,14 +164,14 @@ if st.sidebar.button('Submit') or st.button('Dataset Analysis'):
 
     progress_text = "Operation in progress. Please wait."
     my_bar = st.progress(0, text=progress_text)
-    for percent_complete in range(100):
+    for percent_complete in range(80):
         time.sleep(0.01)
         my_bar.progress(percent_complete + 1, text=progress_text)
     time.sleep(0.07)
     my_bar.empty()
     
     with st.spinner('Wait for it...'):
-        time.sleep(2)
+        time.sleep(1)
     
     import math
     # Define a function to add color to DataFrame values
