@@ -5,3 +5,4 @@ scikit-learn
 streamlit_extras
 pip==23.3.2
 plotly
+tabulate
