@@ -291,9 +291,12 @@ if st.sidebar.button('Submit') or st.button('Dataset Analysis'):
             """,
             unsafe_allow_html=True
         )
+        
+        # Membuat grafik dengan palet warna yang menarik
         fig = px.bar(species_df, x="species", y="body_mass_g",
-                    text=['{:.2f}g'.format(x) for x in species_df["body_mass_g"]],
-                    template="seaborn")
+                    text=['{:.2f} g'.format(x) for x in species_df["body_mass_g"]],
+                    template="seaborn", color='species',
+                    color_discrete_sequence=px.colors.qualitative.Vivid)
         
         # Set font size for labels in Plotly chart
         fig.update_layout(
@@ -315,7 +318,7 @@ if st.sidebar.button('Submit') or st.button('Dataset Analysis'):
             unsafe_allow_html=True
         )
         fig = px.pie(filtered_df, values="body_mass_g", names="island", hole=0.5)
-        fig.update_traces(text=filtered_df["island"], textposition="outside")
+        fig.update_traces(text=filtered_df["island"], textposition="inside")
         
         # Set font size for labels in Plotly chart
         fig.update_layout(
